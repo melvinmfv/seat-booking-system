@@ -13,7 +13,6 @@ const useCredential = () => {
     const checkCredential = async () => {
       // Replace with actual logic to check if the user is logged in
       const loggedIn = await isLoggedIn();
-      console.log('loggedIn', loggedIn)
 
       if (loggedIn) {
         // Replace with actual logic to fetch user info
