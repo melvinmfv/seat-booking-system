@@ -27,7 +27,8 @@ const formSchema = z.object({
   }),
 });
 const LogInPage = () => {
-  const userInfo = useCredential();
+  const { setUserInfo, userInfo } = useUser();
+  // const userInfo = useCredential();
   const navigate = useNavigate();
   useEffect(() => {
     if (userInfo) {
@@ -42,8 +43,6 @@ const LogInPage = () => {
       password: '',
     },
   });
-
-  const { setUserInfo } = useUser();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
