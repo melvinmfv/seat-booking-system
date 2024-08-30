@@ -109,7 +109,7 @@ const SeatGridPage = memo(() => {
           <div className='text-center space-x-3'>
             <h3>Scan to checkin</h3>
             <QRCode
-              value={`https://seat-booking-system-suee.vercel.app/checkin/${userInfo?.id}`}
+              value={`https://seat-booking-system-suee.vercel.app/checkin/${selectedSeat}`}
             />
           </div>
         </div>
