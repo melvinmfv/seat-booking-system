@@ -13,10 +13,8 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 // import useCredential from '@/hooks/credential';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { saveUserInfo } from '../../lib/session';
-import { useUser } from '../../context/UserContent';
+import { memo } from 'react';
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -26,16 +24,8 @@ const formSchema = z.object({
     message: 'Password must be at least 8 characters.',
   }),
 });
-const LogInPage = () => {
-  const { setUserInfo, userInfo } = useUser();
-  // const userInfo = useCredential();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (userInfo) {
-      // redirect to booking page
-      navigate('/booking');
-    }
-  }, [userInfo, navigate]);
+
+const LogInPage = memo(() => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,7 +47,6 @@ const LogInPage = () => {
       const userInfo = await response.json();
       if (userInfo.status === 'success') {
         saveUserInfo(userInfo);
-        setUserInfo(userInfo);
         console.log('User info saved:', userInfo);
       } else {
         console.error('Login failed:', userInfo.message);
@@ -106,7 +95,6 @@ const LogInPage = () => {
       </Form>
     </div>
   );
-};
-
+});
 LogInPage.displayName = 'LogInPage';
 export default LogInPage;

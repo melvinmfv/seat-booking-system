@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
+import { memo } from 'react';
 
 const formSchema = z.object({
   seats: z.array(
@@ -23,7 +24,7 @@ const formSchema = z.object({
   ),
 });
 
-const SeatBookingPage = () => {
+const SeatBookingPage = memo(() => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,6 +73,6 @@ const SeatBookingPage = () => {
       </Form>
     </div>
   );
-};
+});
 
 export default SeatBookingPage;
