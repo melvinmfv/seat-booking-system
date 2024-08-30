@@ -11,9 +11,7 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import useCredential from '@/hooks/credential';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { memo } from 'react';
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -24,15 +22,7 @@ const formSchema = z.object({
   }),
 });
 
-const LogInPage = () => {
-  const userInfo = useCredential();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (userInfo) {
-      // redirect to booking page
-      navigate('/booking');
-    }
-  }, [userInfo, navigate]);
+const LogInPage = memo(() => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,6 +73,6 @@ const LogInPage = () => {
       </Form>
     </div>
   );
-};
+});
 LogInPage.displayName = 'LogInPage';
 export default LogInPage;

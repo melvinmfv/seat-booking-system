@@ -1,21 +1,29 @@
 import useBookingInfo from '@/hooks/booking';
-import { useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import QRCode from 'react-qr-code';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import BookingDrawer from '../BookingDrawer';
 import { Input } from '../ui/input';
-import useCredential from '@/hooks/credential';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 
-const SeatGridPage = () => {
-  const userInfo = useCredential();
-  const navigate = useNavigate();
+const formSchema = z.object({
+  startDate: z.string().min(2, {
+    message: 'Start date is required.',
+  }),
+  endDate: z.string().min(2, {
+    message: 'End date is required.',
+  }),
+});
 
-  useEffect(() => {
-    if (!userInfo) {
-      // redirect to login page
-      navigate('/');
-    }
-  }, [userInfo, navigate]);
+const SeatGridPage = memo(() => {
+  const userInfo = {
+    id: '123',
+    name: 'Melvin',
+    email: 'melvin@example.com',
+  };
   const [searchParams] = useSearchParams();
   const seatNumber = searchParams.get('seatNumber');
 
@@ -27,6 +35,13 @@ const SeatGridPage = () => {
   const seats = Array.from({ length: 50 }, (_, index) => ({
     seatIndex: index + 1,
   }));
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      startDate: '',
+      endDate: '',
+    },
+  });
 
   const handleSeatClick = (seatIndex: string) => {
     setSelectedSeat(seatIndex);
@@ -55,26 +70,52 @@ const SeatGridPage = () => {
       </div>
 
       <BookingDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer}>
-        <h3 className='text-xl font-bold mb-4'>
-          User Dany - Seat {selectedSeat}
-        </h3>
-        <div className='mb-4'>
-          <label className='block mb-2'>Start Time</label>
-          <Input type='datetime-local' />
-        </div>
-        <div className='mb-4'>
-          <label className='block mb-2'>End Time</label>
-          <Input type='datetime-local' />
-        </div>
-        <div className='text-center space-x-3'>
-          <h3>Scan to checkin</h3>
-          <QRCode
-            value={`https://seat-booking-system-suee.vercel.app//booking?userId=${userInfo?.id}&seatNumber=${selectedSeat}`}
-          />
+        <div className='space-y-6'>
+          <h3 className='text-xl font-bold mb-4'>
+            User Dany - Seat {selectedSeat}
+          </h3>
+          <Form {...form}>
+            <form
+              // onSubmit={form.handleSubmit(onSubmit)}
+              className='space-y-8 w-full'
+            >
+              <FormField
+                control={form.control}
+                name='startDate'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start Time</FormLabel>
+                    <FormControl>
+                      <Input type='datetime-local' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='endDate'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>End Time</FormLabel>
+                    <FormControl>
+                      <Input type='datetime-local' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+
+          <div className='text-center space-x-3'>
+            <h3>Scan to checkin</h3>
+            <QRCode
+              value={`https://seat-booking-system-suee.vercel.app/checkin/${userInfo?.id}`}
+            />
+          </div>
         </div>
       </BookingDrawer>
     </div>
   );
-};
+});
 
 export default SeatGridPage;
