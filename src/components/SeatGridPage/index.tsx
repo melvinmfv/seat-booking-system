@@ -4,10 +4,13 @@ import QRCode from 'react-qr-code';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookingDrawer from '../BookingDrawer';
 import { Input } from '../ui/input';
-import useCredential from '@/hooks/credential';
+// import useCredential from '@/hooks/credential';
+import { useUser } from '@/context/UserContent';
 
 const SeatGridPage = () => {
-  const userInfo = useCredential();
+//   const userInfo = useCredential();
+    const { userInfo } = useUser();
+
   const navigate = useNavigate();
 
   useEffect(() => {
