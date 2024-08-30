@@ -1,3 +1,4 @@
+// src/components/LoginPage/index.tsx
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,16 +15,17 @@ import { Input } from '../ui/input';
 import useCredential from '@/hooks/credential';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { saveUserInfo } from '../../lib/session';
+import { useUser } from '../../context/UserContent';
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  email: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
-  passowrd: z.string().min(8, {
+  password: z.string().min(8, {
     message: 'Password must be at least 8 characters.',
   }),
 });
-
 const LogInPage = () => {
   const userInfo = useCredential();
   const navigate = useNavigate();
@@ -36,14 +38,36 @@ const LogInPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
-      passowrd: '',
+      email: '',
+      password: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  const { setUserInfo } = useUser();
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch('/api/v1/users/sign_in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({user: values})
+      });
+
+      const userInfo = await response.json();
+      if (userInfo.status === 'success') {
+        saveUserInfo(userInfo);
+        setUserInfo(userInfo);
+        console.log('User info saved:', userInfo);
+      } else {
+        console.error('Login failed:', userInfo.message);
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
   }
+
   return (
     <div className='m-auto w-full'>
       <h2 className='text-2xl font-bold'>Log In</h2>
@@ -54,25 +78,25 @@ const LogInPage = () => {
         >
           <FormField
             control={form.control}
-            name='username'
+            name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder='Username' {...field} />
+                  <Input placeholder='email' {...field} />
                 </FormControl>
-                <FormMessage {...field} />
+                <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name='passowrd'
+            name='password'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder='Password' {...field} />
+                  <Input type='password' placeholder='Password' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,5 +108,6 @@ const LogInPage = () => {
     </div>
   );
 };
+
 LogInPage.displayName = 'LogInPage';
 export default LogInPage;
