@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   FormControl,
@@ -14,7 +15,8 @@ import {
 import { Input } from '../ui/input';
 // import useCredential from '@/hooks/credential';
 import { saveUserInfo } from '../../lib/session';
-import { memo } from 'react';
+import { memo,useEffect } from 'react';
+import { useUser } from '@/context/UserContent';
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -26,6 +28,16 @@ const formSchema = z.object({
 });
 
 const LogInPage = memo(() => {
+  const { setUserInfo, userInfo } = useUser();
+  // const userInfo = useCredential();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (userInfo) {
+      // redirect to booking page
+      navigate('/booking');
+    }
+  }, [userInfo, navigate]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +59,7 @@ const LogInPage = memo(() => {
       const userInfo = await response.json();
       if (userInfo.status === 'success') {
         saveUserInfo(userInfo);
+        setUserInfo(userInfo);
         console.log('User info saved:', userInfo);
       } else {
         console.error('Login failed:', userInfo.message);
