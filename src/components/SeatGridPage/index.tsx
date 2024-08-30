@@ -1,21 +1,12 @@
 import useBookingInfo from '@/hooks/booking';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import QRCode from 'react-qr-code';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import BookingDrawer from '../BookingDrawer';
 import { Input } from '../ui/input';
-import useCredential from '@/hooks/credential';
 
 const SeatGridPage = () => {
-  const userInfo = useCredential();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!userInfo) {
-      // redirect to login page
-      navigate('/');
-    }
-  }, [userInfo, navigate]);
+  const userInfo = { id: null };
   const [searchParams] = useSearchParams();
   const seatNumber = searchParams.get('seatNumber');
 
