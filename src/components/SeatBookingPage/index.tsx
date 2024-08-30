@@ -1,9 +1,7 @@
-// src/components/SeatBookingPage.tsx
-import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import {
   Form,
   FormControl,
@@ -11,8 +9,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
+} from '../ui/form';
+import { Input } from '../ui/input';
 
 const formSchema = z.object({
   seats: z.array(

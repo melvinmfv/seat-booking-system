@@ -2,13 +2,18 @@ import './index.css';
 import './App.css';
 import LogInPage from './components/LoginPage';
 import SeatGridPage from './components/SeatGridPage';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 
 function App() {
   return (
-    <>
-      {/* <LogInPage /> */}
-      <SeatGridPage />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LogInPage />} />
+        <Route path="/booking" element={<SeatGridPage />} />
+      </Routes>
+    </Router>
+
   );
 }
 
