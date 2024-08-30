@@ -69,7 +69,7 @@ const SeatGridPage = () => {
         <div className='text-center space-x-3'>
           <h3>Scan to checkin</h3>
           <QRCode
-            value={`http://localhost:5173/booking?userId=${userInfo?.id}&seatNumber=${selectedSeat}`}
+            value={`https://seat-booking-system-suee.vercel.app//booking?userId=${userInfo?.id}&seatNumber=${selectedSeat}`}
           />
         </div>
       </BookingDrawer>
